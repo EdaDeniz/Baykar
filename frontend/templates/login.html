@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            font-family: sans-serif;
+        }
+        a {
+            color: #aaa;
+            font-size: 14px;
+            display: block;
+        }
+        .login-title {
+            text-align: center;
+            color: #ddd;
+        }
+        #login-page {
+            display: flex;
+        }
+        .notice {
+            font-size: 13px;
+            text-align: center;
+            color: #aaa;
+        }
+        .login {
+            width: 30%;
+            height: 100vh;
+            background: #222;
+            padding: 70px;
+        }
+        .login a {
+            margin-top: 25px;
+            text-align: center;
+        }
+        .form-login {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            align-content: center;
+        }
+        .form-login label {
+            text-align: left;
+            font-size: 13px;
+            margin-top: 10px;
+            margin-left: 20px;
+            display: block;
+            color: #aaa;
+        }
+        .input-text, .input-password {
+            width: 100%;
+            background: #333;
+            border-radius: 25px;
+            margin: 4px 0 10px 0;
+            padding: 10px;
+            display: flex;
+        }
+        .icon {
+            padding: 4px;
+            color: #aaa;
+            min-width: 30px;
+            text-align: center;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            border: 0;
+            background: none;
+            font-size: 16px;
+            padding: 4px 0;
+            outline: none;
+            color: #fff;
+        }
+        button[type="submit"] {
+            width: 100%;
+            border: 0;
+            border-radius: 25px;
+            padding: 14px;
+            background: #444;
+            color: #FFF;
+            display: inline-block;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: ease all 0.3s;
+        }
+        button[type="submit"]:hover {
+            opacity: 0.9;
+        }
+        .background {
+            width: 70%;
+            padding: 40px;
+            height: 100vh;
+            background: linear-gradient(60deg, rgba(50, 50, 50, 0.8), rgba(20, 20, 20, 0.9)) center no-repeat;
+            background-size: cover;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            justify-content: flex-end;
+            align-content: center;
+            flex-direction: row;
+        }
+        .background h1 {
+            color: #FFF;
+            text-align: right;
+            padding: 0;
+            margin: 0;
+        }
+        .checkbox label {
+            display: inline;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="login-page">
+    <div class="login">
+        <h2 class="login-title">Giriş</h2>
+        <p class="notice">Sisteme erişebilmek için lütfen giriş yapınız.</p>
+        <form method="post" action="{% url 'login' %}" class="form-login">
+            {% csrf_token %}
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <p style="color: red;">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <label for="username">Kullanıcı</label>
+            <div class="input-text">
+                <i class="fas fa-envelope icon"></i>
+                <input type="text" name="username" placeholder="Enter your username" required>
+            </div>
+            <label for="password">Şifre</label>
+            <div class="input-password">
+                <i class="fas fa-lock icon"></i>
+                <input type="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit"><i class="fas fa-door-open"></i> Giriş</button>
+        </form>
+
+    </div>
+    <div class="background">
+        <h1>Baykar Personel Giriş Ekranı</h1>
+    </div>
+</div>
+</body>
+</html>
