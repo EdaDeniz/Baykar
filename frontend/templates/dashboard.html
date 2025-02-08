@@ -2,13 +2,20 @@
 {% block content %}
 
     <div class="container mt-4">
+        <!-- Action Buttons -->
+        <div class="d-flex gap-3 mb-4">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPartModal">
+                <i class="bi bi-plus-circle me-2"></i>Parça Oluştur
+            </button>
+        </div>
+
         <!-- Tabs for switching between tables -->
         <ul class="nav nav-tabs mb-3">
             <li class="nav-item">
-                <a class="nav-link active" id="parts-tab" data-bs-toggle="tab" href="#parts-table">Parts</a>
+                <a class="nav-link active" id="parts-tab" data-bs-toggle="tab" href="#parts-table">Parçalar</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="aircraft-tab" data-bs-toggle="tab" href="#aircraft-table">Aircraft</a>
+                <a class="nav-link  " id="aircraft-tab" data-bs-toggle="tab" href="#aircraft-table">Uçaklar</a>
             </li>
         </ul>
 
@@ -19,11 +26,11 @@
                     <table id="partsDataTable" class="table table-striped table-hover">
                         <thead class="table-dark">
                         <tr>
-                            <th>Part Type</th>
-                            <th>Aircraft Type</th>
-                            <th>Produced By</th>
-                            <th>Status</th>
-                            <th>Production Date</th>
+                            <th>Parça Türü</th>
+                            <th>Uçak Türü</th>
+                            <th>Durum</th>
+                            <th>Üretim Tarihi</th>
+                            <th>Aksiyonlar</th>
                         </tr>
                         </thead>
                     </table>
@@ -36,10 +43,10 @@
                     <table id="aircraftDataTable" class="table table-striped table-hover">
                         <thead class="table-dark">
                         <tr>
-                            <th>Aircraft Type</th>
-                            <th>Assembly Date</th>
-                            <th>Assembled By</th>
-                            <th>Parts Count</th>
+                            <th>Uçak Türü</th>
+                            <th>Oluşturulma Günü</th>
+                            <th>Oluşturan</th>
+                            <th>Parça Sayısı</th>
                         </tr>
                         </thead>
                     </table>
@@ -47,6 +54,49 @@
             </div>
         </div>
     </div>
+
+    <!-- Create Part Modal -->
+    <div class="modal fade" id="createPartModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yeni Parça Oluştur</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Error Message Container -->
+                    <div id="createPartError" class="alert alert-danger d-none"></div>
+
+                    <form id="createPartForm">
+                        <div class="mb-3">
+                            <label class="form-label">Parça Türü</label>
+                            <select class="form-select" name="type" required>
+                                {% for part_type in part_types %}
+                                    <option value="{{ part_type.id }}">{{ part_type }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Uçak Türü</label>
+                            <select class="form-select" name="aircraft_type" required>
+                                {% for aircraft_type in aircraft_types %}
+                                    <option value="{{ aircraft_type.id }}">{{ aircraft_type }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" id="createPartBtn">
+                        <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                        Parça oluştur
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 {% endblock %}
 
@@ -58,6 +108,8 @@
 
     <script>
         $(document).ready(function() {
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
             // Initialize Parts DataTable
             const partsTable = $('#partsDataTable').DataTable({
                 ajax: {
@@ -65,9 +117,8 @@
                     dataSrc: ''
                 },
                 columns: [
-                    { data: 'type' },
-                    { data: 'aircraft_type' },
-                    { data: 'produced_by' },
+                    { data: 'type_name' },
+                    { data: 'aircraft_type_name' },
                     {
                         data: 'is_used',
                         render: function(data) {
@@ -76,8 +127,23 @@
                                 : '<span class="badge bg-success">Available</span>';
                         }
                     },
-                    { data: 'production_date' }
+                    {
+                        data: 'production_date',
+                        render: function(data) {
+                            return new Date(data).toLocaleString();
+                        }
+                    },
+                    {
+                        data: 'id',
+                        render: function(data, type, row) {
+                            if (row.is_used) {
+                                return '<button class="btn btn-sm btn-secondary" disabled>Recycle</button>';
+                            }
+                            return '<button class="btn btn-sm btn-danger recycle-part" data-id="' + data + '">Recycle</button>';
+                        }
+                    }
                 ],
+                order: [[4, 'desc']],
                 responsive: true
             });
 
@@ -88,9 +154,14 @@
                     dataSrc: ''
                 },
                 columns: [
-                    { data: 'type' },
-                    { data: 'assembled_date' },
-                    { data: 'assembled_by' },
+                    { data: 'type_name' },
+                    {
+                        data: 'assembled_date',
+                        render: function(data) {
+                            return new Date(data).toLocaleString();
+                        }
+                    },
+                    { data: 'assembled_by_name' },
                     {
                         data: 'parts',
                         render: function(data) {
@@ -98,16 +169,172 @@
                         }
                     }
                 ],
+                order: [[1, 'desc']],
                 responsive: true
             });
 
-            // Tab switching (Bootstrap handles the tab switching)
+            // Handle Part Creation
+            $('#createPartBtn').click(function() {
+                $('#createPartError').addClass('d-none').empty(); // Clear previous errors
+                const $btn = $(this);
+                const $spinner = $btn.find('.spinner-border');
+                const formData = new FormData($('#createPartForm')[0]);
+                const data = Object.fromEntries(formData.entries());
+
+                $btn.prop('disabled', true);
+                $spinner.removeClass('d-none');
+
+                $.ajax({
+                    url: '/api/parts/',
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        $('#createPartModal').modal('hide');
+                        $('#createPartForm')[0].reset();
+                        partsTable.ajax.reload();
+                        showAlert('success', 'Part created successfully!');
+                    },
+                    error: function(xhr) {
+                        const errorDiv = $('#createPartError');
+                        errorDiv.removeClass('d-none').empty(); // Show and clear previous errors
+
+                        if (xhr.responseJSON) {
+                            if (typeof xhr.responseJSON === 'object') {
+                                // If response contains multiple error fields
+                                const errors = Object.entries(xhr.responseJSON)
+                                    .map(([key, value]) => {
+                                        const errorMsg = Array.isArray(value) ? value.join(', ') : value;
+                                        return `<strong>${key}:</strong> ${errorMsg}`;
+                                    })
+                                    .join('<br>');
+                                errorDiv.html(errors);
+                            } else {
+                                // If response is a simple string message
+                                errorDiv.text(xhr.responseJSON);
+                            }
+                        } else {
+                            errorDiv.text('Bir hata meydana geldi.');
+                        }
+                    },
+
+                    complete: function() {
+                        $btn.prop('disabled', false);
+                        $spinner.addClass('d-none');
+                    }
+                });
+            });
+
+            // Load Available Parts when Aircraft Type is Selected
+            $('#aircraftTypeSelect').change(function() {
+                const aircraftTypeId = $(this).val();
+                if (!aircraftTypeId) {
+                    $('#partsSelection').empty();
+                    return;
+                }
+
+                $.ajax({
+                    url: `/api/parts/available_parts/?aircraft_type=${aircraftTypeId}`,
+                    success: function(data) {
+                        const partsHtml = data.map(part => `
+                            <div class="mb-3">
+                                <label class="form-label">${part.type}</label>
+                                <select class="form-select" name="parts[]" required>
+                                    <option value="">Select ${part.type}</option>
+                                    <option value="${part.id}">
+                                        Production Date: ${new Date(part.production_date).toLocaleString()}
+                                    </option>
+                                </select>
+                            </div>
+                        `).join('');
+
+                        $('#partsSelection').html(partsHtml);
+                    },
+                    error: function(xhr) {
+                        const errorDiv = $('#createAircraftError');
+                        errorDiv.removeClass('d-none');
+
+                        if (xhr.responseJSON) {
+                            if (typeof xhr.responseJSON === 'object') {
+                                const errors = Object.entries(xhr.responseJSON)
+                                    .map(([key, value]) => {
+                                        const errorMsg = Array.isArray(value) ? value.join(', ') : value;
+                                        return `${key}: ${errorMsg}`;
+                                    })
+                                    .join('<br>');
+                                errorDiv.html(errors);
+                            } else {
+                                errorDiv.html(xhr.responseJSON);
+                            }
+                        } else {
+                            errorDiv.text('Bir Hata Meydana Geldi!');
+                        }
+                    }
+                });
+            });
+
+
+            // Handle Part Recycling
+            $('#partsDataTable').on('click', '.recycle-part', function() {
+                const partId = $(this).data('id');
+                if (confirm('Bu parçayı geri dönüşüme göndermek istediğinizden emin misiniz?')) {
+                    $.ajax({
+                        url: `/api/parts/${partId}/`,
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRFToken': csrftoken
+                        },
+                        success: function() {
+                            partsTable.ajax.reload();
+                            showAlert('success', 'Parça başarıyla geri dönüştürüldü!');
+                        },
+                        error: function() {
+                            showAlert('danger', 'Hata!');
+                        }
+                    });
+                }
+            });
+
+            // Helper function to show alerts (success messages only)
+            function showAlert(type, message) {
+                // Remove any existing alerts first
+                $('.alert-floating').remove();
+
+                // Remove any lingering modal backdrops
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open').css('padding-right', '');
+
+                if (type === 'success') {
+                    const alertHtml = `
+            <div class="alert alert-${type} alert-dismissible alert-floating fade show"
+                 role="alert"
+                 style="position: fixed; top: 20px; right: 20px; z-index: 1050; max-width: 400px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+                    $('body').append(alertHtml);
+                    setTimeout(() => $('.alert-floating').alert('close'), 3000);
+                }
+            }
+
+            // Tab switching handler
             $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
                 if ($(e.target).attr('id') === 'parts-tab') {
                     partsTable.columns.adjust();
                 } else {
                     aircraftTable.columns.adjust();
                 }
+            });
+
+            // Reset forms and clear errors when modals are closed
+            $('#createPartModal').on('hidden.bs.modal', function () {
+                $(this).find('form')[0].reset();
+                $(this).find('.alert-danger').addClass('d-none').empty(); // Clear error messages
+
             });
         });
     </script>
