@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import PartType, AircraftType, TeamType, Part, Aircraft
+from .models import PartType, AircraftType, TeamType, Part, Aircraft, UserProfile
+
 
 class PartTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,18 +18,28 @@ class TeamTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PartSerializer(serializers.ModelSerializer):
-    type = serializers.CharField(source='type.name', read_only=True)
-    aircraft_type = serializers.CharField(source='aircraft_type.name', read_only=True)
-    produced_by = serializers.CharField(source='produced_by.name', read_only=True)
+    type_name = serializers.CharField(source='type.name', read_only=True)
+    aircraft_type_name = serializers.CharField(source='aircraft_type.name', read_only=True)
+    produced_by_name = serializers.CharField(source='produced_by.name', read_only=True)
 
     class Meta:
         model = Part
-        fields = ['id', 'is_used', 'production_date', 'type', 'aircraft_type', 'produced_by']
+        exclude = ['produced_by']  # Exclude 'produced_by' from API input
+
+    def create(self, validated_data):
+        """Automatically set produced_by to the user's team"""
+        request = self.context['request']
+        user_team = UserProfile.objects.get(user=request.user).team
+        validated_data['produced_by'] = user_team
+        return super().create(validated_data)
 
 
 class AircraftSerializer(serializers.ModelSerializer):
+    type_name = serializers.CharField(source='type.name', read_only=True)
     parts = PartSerializer(many=True, read_only=True)
+    assembled_by_name = serializers.CharField(source='assembled_by.name', read_only=True)
 
     class Meta:
         model = Aircraft
         fields = '__all__'
+        read_only_fields = ['assembled_by']
