@@ -24,7 +24,7 @@ class PartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Part
-        exclude = ['produced_by']  # Exclude 'produced_by' from API input
+        exclude = ['produced_by']
 
     def create(self, validated_data):
         """Automatically set produced_by to the user's team"""
