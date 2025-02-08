@@ -1,0 +1,627 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: 0.0.0
+paths:
+  /api/aircraft/:
+    get:
+      operationId: api_aircraft_list
+      description: API viewset for Aircraft model
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Aircraft'
+          description: ''
+    post:
+      operationId: api_aircraft_create
+      description: API viewset for Aircraft model
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Aircraft'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Aircraft'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Aircraft'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aircraft'
+          description: ''
+  /api/aircraft/{id}/:
+    get:
+      operationId: api_aircraft_retrieve
+      description: API viewset for Aircraft model
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this aircraft.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aircraft'
+          description: ''
+    put:
+      operationId: api_aircraft_update
+      description: API viewset for Aircraft model
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this aircraft.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Aircraft'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Aircraft'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Aircraft'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aircraft'
+          description: ''
+    patch:
+      operationId: api_aircraft_partial_update
+      description: API viewset for Aircraft model
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this aircraft.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAircraft'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAircraft'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAircraft'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aircraft'
+          description: ''
+    delete:
+      operationId: api_aircraft_destroy
+      description: API viewset for Aircraft model
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this aircraft.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/aircraft/assembly_status/:
+    get:
+      operationId: api_aircraft_assembly_status_retrieve
+      description: Get assembly status and available parts for each aircraft type
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aircraft'
+          description: ''
+  /api/parts/:
+    get:
+      operationId: api_parts_list
+      description: API viewset for Part model
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Part'
+          description: ''
+    post:
+      operationId: api_parts_create
+      description: API viewset for Part model
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Part'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Part'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Part'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Part'
+          description: ''
+  /api/parts/{id}/:
+    get:
+      operationId: api_parts_retrieve
+      description: API viewset for Part model
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Part'
+          description: ''
+    put:
+      operationId: api_parts_update
+      description: API viewset for Part model
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Part'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Part'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Part'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Part'
+          description: ''
+    patch:
+      operationId: api_parts_partial_update
+      description: API viewset for Part model
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPart'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPart'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPart'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Part'
+          description: ''
+    delete:
+      operationId: api_parts_destroy
+      description: Override delete to implement 'recycle' functionality
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/parts/available_parts/:
+    get:
+      operationId: api_parts_available_parts_retrieve
+      description: Get available parts for a specific aircraft type
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Part'
+          description: ''
+  /api/parts/inventory_status/:
+    get:
+      operationId: api_parts_inventory_status_retrieve
+      description: Get inventory status for all aircraft types
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Part'
+          description: ''
+  /api/schema/:
+    get:
+      operationId: api_schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+components:
+  schemas:
+    Aircraft:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        type_name:
+          type: string
+          readOnly: true
+        parts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Part'
+          readOnly: true
+        assembled_by_name:
+          type: string
+          readOnly: true
+        assembled_date:
+          type: string
+          format: date-time
+          readOnly: true
+        type:
+          type: integer
+        assembled_by:
+          type: integer
+      required:
+      - assembled_by
+      - assembled_by_name
+      - assembled_date
+      - id
+      - parts
+      - type
+      - type_name
+    Part:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        type_name:
+          type: string
+          readOnly: true
+        aircraft_type_name:
+          type: string
+          readOnly: true
+        produced_by_name:
+          type: string
+          readOnly: true
+        is_used:
+          type: boolean
+        production_date:
+          type: string
+          format: date-time
+          readOnly: true
+        type:
+          type: integer
+        aircraft_type:
+          type: integer
+      required:
+      - aircraft_type
+      - aircraft_type_name
+      - id
+      - produced_by_name
+      - production_date
+      - type
+      - type_name
+    PatchedAircraft:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        type_name:
+          type: string
+          readOnly: true
+        parts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Part'
+          readOnly: true
+        assembled_by_name:
+          type: string
+          readOnly: true
+        assembled_date:
+          type: string
+          format: date-time
+          readOnly: true
+        type:
+          type: integer
+        assembled_by:
+          type: integer
+    PatchedPart:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        type_name:
+          type: string
+          readOnly: true
+        aircraft_type_name:
+          type: string
+          readOnly: true
+        produced_by_name:
+          type: string
+          readOnly: true
+        is_used:
+          type: boolean
+        production_date:
+          type: string
+          format: date-time
+          readOnly: true
+        type:
+          type: integer
+        aircraft_type:
+          type: integer
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
