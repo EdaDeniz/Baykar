@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import PartType, AircraftType, TeamType, Staff, Part, Aircraft
+from .models import PartType, AircraftType, TeamType, Part, Aircraft, UserProfile
+
 
 @admin.register(PartType)
 class PartTypeAdmin(admin.ModelAdmin):
@@ -16,21 +17,9 @@ class AircraftTypeAdmin(admin.ModelAdmin):
 
 @admin.register(TeamType)
 class TeamTypeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'managed_part_type', 'staff_count')
+    list_display = ('name', 'managed_part_type')
     list_filter = ('managed_part_type',)
     search_fields = ('name',)
-
-    def staff_count(self, obj):
-        return obj.staff.count()
-    staff_count.short_description = 'Number of Staff'
-
-
-@admin.register(Staff)
-class StaffAdmin(admin.ModelAdmin):
-    list_display = ('name', 'team')
-    list_filter = ('team',)
-    search_fields = ('name',)
-
 
 @admin.register(Part)
 class PartAdmin(admin.ModelAdmin):
@@ -68,3 +57,6 @@ class AircraftAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.full_clean()  # This will run the clean method before saving
         super().save_model(request, obj, form, change)
+
+
+admin.site.register(UserProfile)
