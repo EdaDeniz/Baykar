@@ -26,13 +26,12 @@ class PartViewSet(viewsets.ModelViewSet):
         user_profile = UserProfile.objects.get(user=self.request.user)
         user_team = user_profile.team
 
-        # Validate part type against team's managed part type
         try:
-            part_type = PartType.objects.get(id=self.request.data['type'])
+            part_type = PartType.objects.get(id=self.request.data.get('type'))
         except PartType.DoesNotExist:
             raise ValidationError({"type": "Invalid part type selected."})
 
-        if part_type != user_team.managed_part_type:
+        if user_team.managed_part_type and part_type != user_team.managed_part_type:
             raise ValidationError({"type": f"Your team can only create {user_team.managed_part_type.name} parts."})
 
         serializer.save(produced_by=user_team)
@@ -102,13 +101,10 @@ class AircraftViewSet(viewsets.ModelViewSet):
         user_profile = UserProfile.objects.get(user=self.request.user)
         user_team = user_profile.team
 
-        if user_team.name != "Assembly Set":
+        if user_team.name != "Montaj Takımı":
             raise ValidationError("Only Assembly team can create aircraft")
 
-        if user_team.name != "Assembly Set":
-            raise ValidationError("Only Assembly team can create aircraft")
-
-        part_ids = self.request.data.getlist('parts', [])
+        part_ids = self.request.data.get('parts', [])
         parts = Part.objects.filter(id__in=part_ids)
 
         if not part_ids or parts.count() != len(part_ids):
@@ -123,24 +119,11 @@ class AircraftViewSet(viewsets.ModelViewSet):
         except AircraftType.DoesNotExist:
             raise ValidationError("Invalid aircraft type selected.")
 
-        # Check required parts
-        required_part_types = set(PartType.objects.values_list('name', flat=True))
-        provided_part_types = set(part.type.name for part in parts)
-
-        if required_part_types != provided_part_types:
-            missing_parts = required_part_types - provided_part_types
-            raise ValidationError(f"Missing required parts: {', '.join(missing_parts)}")
-
-        for part in parts:
-            if part.is_used:
-                raise ValidationError(f"Part {part} is already used")
-            if part.aircraft_type_id != aircraft_type.id:
-                raise ValidationError(f"Part {part} is not compatible with this aircraft type")
-
         with transaction.atomic():
             aircraft = serializer.save(type=aircraft_type, assembled_by=user_team)
             aircraft.parts.set(parts)
             parts.update(is_used=True)
+
 
     @action(detail=False, methods=['get'])
     def assembly_status(self, request):

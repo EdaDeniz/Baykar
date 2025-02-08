@@ -139,5 +139,9 @@ LOGOUT_REDIRECT_URL = '/'  # Redirect after logout
 LOGIN_URL = '/login/'  # Redirect if login is required
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',  # For Browsable API
+        'rest_framework.authentication.TokenAuthentication',    # For API authentication
+    ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
